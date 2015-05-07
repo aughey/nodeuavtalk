@@ -1,4 +1,4 @@
-== Introduction
+# Introduction
 
 This is intended to be a node.js implementation of the uavtalk protocol.
 
