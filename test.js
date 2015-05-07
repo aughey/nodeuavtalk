@@ -152,6 +152,10 @@ cc3d_serial.on("open", function() {
   console.log("Opened cc3d");
   cc3d_serial.on("data", function(packet) {
     var obj = uavobjects[packet.object_id];
+    if(!obj) {
+      //console.log("Failed to find object");
+      console.log(packet);
+    }
     if(obj && handlers[obj.name]) {
       var objdata = unpack_obj(obj,packet.data);
       handlers[obj.name](objdata);
