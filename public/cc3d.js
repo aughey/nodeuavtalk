@@ -3,8 +3,11 @@ var dps = [];
 for(var i=0;i<10;i+=0.01) {
 dps.push(Math.sin(i));
 }
+
+var chart = $('#chartContainer');
+chart.attr('width',$(window).width());
 var smoothie = new SmoothieChart({ minValue: -180, maxValue: 180});
-smoothie.streamTo(document.getElementById("chartContainer"));
+smoothie.streamTo(chart[0]);
 
 var rollseries = new TimeSeries();
 var pitchseries = new TimeSeries();
