@@ -55,7 +55,7 @@ function parsernew(callback) {
 	index += tocopy;
 	if(headerbufferlen === 10) {
 	  // Decode the header
-	  var header = bufferpack.unpack("<BBHIH",headerbuffer);
+	  var header = bufferpack.unpack("<BBHiH",headerbuffer);
 	  datatoread = header[2] - headerbufferlen;
 	  if(datatoread < 0) {
 	   datatoread = 0;

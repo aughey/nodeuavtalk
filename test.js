@@ -1,6 +1,6 @@
 var EventEmitter = require('events').EventEmitter;
 var uavtalk_packet = require("./uavtalk_packet");
-var uavtalk_decode = require("./uavtalk_decode");
+var uavtalk_decode = require("./uavtalk_decodejson");
 var SerialPort = require("serialport").SerialPort;
 var _ = require('underscore');
 var net = require('net');
@@ -15,7 +15,7 @@ function printhandler(data) {
   console.log(data);
 }
 
-var uavtalk_decoder = uavtalk_decode.decoder("../../OpenPilot/shared/uavobjectdefinition");
+var uavtalk_decoder = uavtalk_decode.decoder("../uavtalk_json");
 
 cc3d_tcp.on("data", uavtalk_packet.parser(function(packet) {
   if(!uavtalk_decoder.ready()) {

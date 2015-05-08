@@ -162,6 +162,7 @@ function parse_object_def(err, result){
 	info.id = id;
 	//if (info.name == 'GCSTelemetryStats') console.log(info);
 	uavobjects[id] = info;
+	console.log(info);
 }
 
 function fieldTypeLessThan(a, b){

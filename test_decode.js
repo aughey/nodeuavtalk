@@ -1,5 +1,5 @@
 var uavtalk_packet = require("./uavtalk_packet");
-var uavtalk_decode = require("./uavtalk_decode");
+var uavtalk_decode = require("./uavtalk_decodejson");
 var net = require('net');
 
 var cc3d_tcp = new net.Socket();
@@ -7,7 +7,7 @@ cc3d_tcp.connect(12345,"localhost", function() {
   console.log("cc3d connected to tcp gateway");
 });
 
-var uavtalk_decoder = uavtalk_decode.decoder("../../OpenPilot/shared/uavobjectdefinition");
+var uavtalk_decoder = uavtalk_decode.decoder("../uavtalk_json");
 
 var heard = {};
 
