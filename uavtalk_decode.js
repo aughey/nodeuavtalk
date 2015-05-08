@@ -15,6 +15,8 @@ function decoder(objpath) {
   fs.readdir(objpath, function(err, files){
   	if (err) throw err;
 
+	var count = files.length;
+
 	for (var i in files){
 		var filename = path.join(objpath,files[i]);
 		fs.readFile(filename, function(err, data){
@@ -25,12 +27,15 @@ function decoder(objpath) {
   			  parser(data, parse_object_def);
 			} catch(e) {
 			  console.log("Couldn't parse " + filename);
+			} finally {
+			  count--;
+			  if(count === 0) {
+			    ready = true;
+                          }
 			}
 		});
 	}
 
-	console.log("Object def read complete");
-	ready = true;
   });
 
 function lshift(num, bits) {
