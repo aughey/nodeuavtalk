@@ -7,6 +7,6 @@ cc3d_tcp.connect(12345,"localhost", function() {
 });
 
 cc3d_tcp.on("data", uavtalk_packet.parser(function(packet) {
-  //console.log(packet);
+  console.log(packet);
 }));
 

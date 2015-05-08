@@ -50,7 +50,7 @@ function parsernew(callback) {
         // Read the rest of the header into the buffer
 	// 10 bytes total
 	var tocopy = min(datalen - index,10 - headerbufferlen);
-        data.copy(headerbuffer,headerbufferlen,index,tocopy);
+        data.copy(headerbuffer,headerbufferlen,index,index + tocopy);
 	headerbufferlen += tocopy;
 	index += tocopy;
 	if(headerbufferlen === 10) {
@@ -65,7 +65,7 @@ function parsernew(callback) {
 	  }
 	  databuffer = new Buffer(datatoread);
 
-	  message.type = types[header[1]];
+	  message.type = types[header[1] & 0x0f];
 	  message.object_id = header[3];
 	  message.instance_id = header[4];
 	  message.data = databuffer;
@@ -73,7 +73,7 @@ function parsernew(callback) {
         }
       } else if(state === 2) {
         var tocopy = min(datalen - index,datatoread);
-        data.copy(databuffer,databuffer.length - datatoread,index,tocopy);
+        data.copy(databuffer,databuffer.length - datatoread,index,index + tocopy);
 	datatoread -= tocopy;
 	index += tocopy;
 
