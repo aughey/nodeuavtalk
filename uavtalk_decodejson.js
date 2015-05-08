@@ -37,33 +37,39 @@ function decoder(objpath) {
 		  var json = JSON.parse(data);
 		  var unpackstr = "<"
 		  _.each(json.fields, function(f) {
+		    var u;
 		    if(f.type === 0) {
 		      // int8
-		      unpackstr += "b"
+		      u = "b"
 		    } else if(f.type === 1) {
 		      // int16
-		      unpackstr += "h"
+		      u = "h"
 		    } else if(f.type === 2) {
 		      // int32
-		      unpackstr += "i"
+		      u = "i"
 		    } else if(f.type === 3) {
 		      // uint8
-		      unpackstr += "B"
+		      u = "B"
 		    } else if(f.type === 4) {
 		      // uint16
-		      unpackstr += "H"
+		      u = "H"
 		    } else if(f.type === 5) {
 		      // uint32
-		      unpackstr += "I"
+		      u = "I"
 		    } else if(f.type === 6) {
 		      // float
-		      unpackstr += "f"
+		      u = "f"
 		    } else if(f.type === 7) {
 		      // enum
-		      unpackstr += "B"
+		      u = "B"
 		    } else {
 		      throw("Unknown field type: " + f.type);
 		    }
+		    u = u + "(" + f.name + ")";
+		    if(f.numElements > 1) {
+		      u = f.numElements.toString(10) + u;
+		    }
+		    unpackstr += u;
 		  });
 		  json.unpackstr = unpackstr;
 		  uavobjects[json.object_id] = json;
@@ -81,6 +87,7 @@ function unpack_obj(obj,data) {
     console.log("Couldn't unpack " + obj.name);
     return null;
   }
+  return unpacked;
   _.each(obj.fields, function(f,index) {
     out[f.name] = unpacked[index];
   });

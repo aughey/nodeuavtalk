@@ -33,6 +33,7 @@ cc3d_tcp.on("data", uavtalk_packet.parser(function(packet) {
   if(diff > 1000) {
     var hz = info.count / (diff / 1000.0);
     console.log(data.name + ": " + hz + "Hz");
+    console.log(data);
     info.count = 0;
     info.last = t;
   }
