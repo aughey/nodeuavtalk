@@ -1,5 +1,6 @@
 var SerialPort = require("serialport").SerialPort;
 var _ = require('underscore');
+var net = require('net');
 
 console.log("Reading object defs...");
 var fs = require('fs');
@@ -65,6 +66,9 @@ function uavtalk_parser() {
         message.type = types[byte & 0x0f];
         if(!message.type) {
           console.log("Unknown message type " + byte.toString(16));
+	  ++index;
+	  state = 0;
+	  continue;
         }
 	if(byte & 0x80) {
 	  throw("Didn't expect a timestamped object");
@@ -121,9 +125,19 @@ function uavtalk_parser() {
   }
 }
 
-var cc3d_serial = new SerialPort("/dev/ttyAMA0", {
-  baudrate: 57600,
-  parser: uavtalk_parser()
+//var cc3d_serial = new SerialPort("/dev/ttyAMA0", {
+//  baudrate: 57600,
+ // parser: uavtalk_parser()
+//});
+var cc3d_tcp = new net.Socket();
+cc3d_tcp.connect(12345,"localhost", function() {
+  console.log("cc3d connected to tcp gateway");
+});
+var EventEmitter = require('events').EventEmitter;
+var cc3d_serial = new EventEmitter;
+var cc3d_parser = uavtalk_parser()
+cc3d_tcp.on("data", function(data) {
+  cc3d_parser(cc3d_serial,data);
 });
 
 function unpack_obj(obj,data) {
@@ -140,28 +154,55 @@ function unpack_obj(obj,data) {
 }
 
 function printhandler(data) {
-  console.log(data);
+  //console.log(data);
+}
+
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  var forward = function(data,name) {
+    socket.emit(name,data,name);
+  }
+  dataemitter.on('AttitudeState', forward);
+  socket.on('disconnect', function() {
+    console.log("a user disconnected");
+    dataemitter.removeListener('AttitudeState', forward);
+  });
+});
+
+app.use(express.static('public'));
+
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+});
+
+var dataemitter = new EventEmitter();
+
+function do_emit(data,name) {
+  dataemitter.emit(name,data,name);
 }
 
 var handlers = {
   "ManualControlCommand": printhandler,
-  "AttitudeState": printhandler
+  "AttitudeState": do_emit,
 };
 
-cc3d_serial.on("open", function() {
-  console.log("Opened cc3d");
   cc3d_serial.on("data", function(packet) {
+    
     var obj = uavobjects[packet.object_id];
     if(!obj) {
       //console.log("Failed to find object");
-      console.log(packet);
+      //console.log(packet);
     }
     if(obj && handlers[obj.name]) {
       var objdata = unpack_obj(obj,packet.data);
-      handlers[obj.name](objdata);
+      handlers[obj.name](objdata,obj.name);
     }
   });
-});
 
 function lshift(num, bits) {
   //return num << bits;
@@ -324,3 +365,5 @@ function updateHash(value, hash){
 		return hashout;
 	}
 }
+
+
