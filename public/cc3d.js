@@ -27,15 +27,20 @@ smoothie.addTimeSeries(yawseries,{strokeStyle:'blue'});
   }
 
     var socket = io();
-    socket.on('AttitudeState', function(data) {
+    var tosub = ["AttitudeState","ManualControlCommand","StabilizationDesired"];
+    socket.on('connect', function() {
+      console.log("Socket connected");
+      socket.emit("subscribe", tosub);
+    });
+    _.each(tosub, function(s) {
+      socket.on(s, function(data) {
+        $('#' + data.name).html(JSON.stringify(data,null,2));
+      });
+    });
+    socket.on("AttitudeState", function(data) {
       var t = new Date().getTime();
-      //data.Roll  = clamp(data.Roll);
-      //data.Pitch  = clamp(data.Pitch);
-      //data.Yaw  = clamp(data.Yaw);
       rollseries.append(t,data.Roll);
       pitchseries.append(t,data.Pitch);
       yawseries.append(t,data.Yaw);
-
-      $('#attitude').html(JSON.stringify(data,null,2));
     });
 });

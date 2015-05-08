@@ -10,6 +10,7 @@ function decoder(objpath) {
   var path = require('path');
 
   var uavobjects = {}
+  var ready = false;
 
   fs.readdir(objpath, function(err, files){
   	if (err) throw err;
@@ -29,6 +30,7 @@ function decoder(objpath) {
 	}
 
 	console.log("Object def read complete");
+	ready = true;
   });
 
 function lshift(num, bits) {
@@ -200,17 +202,24 @@ function unpack_obj(obj,data) {
   return out;
 }
 
+  var warned = {};
 
-  return function(packet) {
+  return {
+    ready: function() { return ready; },
+    decode: function(packet) {
     var obj = uavobjects[packet.object_id];
     if(!obj) {
-      //console.log("Failed to find object");
-      //console.log(packet);
+      if(!warned[packet.object_id]) {
+        console.log("Failed to find object");
+        console.log(packet);
+	warned[packet.object_id] = true;
+      }
       return null;
     } else {
       var objdata = unpack_obj(obj,packet.data);
       objdata.name = obj.name;
       return objdata;
+    }
     }
   }
 }
