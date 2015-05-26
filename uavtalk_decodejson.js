@@ -8,7 +8,7 @@ function endsWith(str,suffix) {
 };
 
 function decoder(objpath) {
-  console.log("Reading json object defs...");
+  //console.log("Reading json object defs...");
   var fs = require('fs');
   var path = require('path');
 
