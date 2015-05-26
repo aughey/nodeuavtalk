@@ -1,0 +1,3 @@
+/home/pi/src/nodeuavtalk/all.log {
+  rotate 7
+}

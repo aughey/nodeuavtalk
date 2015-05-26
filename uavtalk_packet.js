@@ -38,7 +38,7 @@ function parsernew(callback) {
       if(state === 0) {
         // sync
         if(data[index] !== 0x3c) {
-	  console.log("Missed sync");
+	  console.error("Missed sync");
 	  ++index;
 	} else {
 	  headerbuffer[0] = 0x3c;
@@ -123,14 +123,14 @@ function parserold(callback) {
         if(byte !== 0x3c) {
           ++index;
 	  state = 0;
-          console.log("Missed sync");
+          console.error("Missed sync");
           continue;
         }
       } else if(state === 1) {
         // Getting message type
         message.type = types[byte & 0x0f];
         if(!message.type) {
-          console.log("Unknown message type " + byte.toString(16));
+          console.error("Unknown message type " + byte.toString(16));
 	  ++index;
 	  state = 0;
 	  continue;
