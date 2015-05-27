@@ -61,3 +61,16 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
+var gpsd = require("node-gpsd");
+var listener = new gpsd.Listener();
+listener.connect(function() {
+    listener.watch();
+    listener.on('raw', function(tpv) {
+      try {
+        var parsed = JSON.parse(tpv);
+	parsed.name = parsed.class;
+	dataemitter.emit(parsed.class,parsed);
+      } catch(e) {
+      }
+    });
+});

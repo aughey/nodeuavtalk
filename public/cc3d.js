@@ -27,7 +27,7 @@ smoothie.addTimeSeries(yawseries,{strokeStyle:'blue'});
   }
 
     var socket = io();
-    var tosub = ["AttitudeState","ManualControlCommand","StabilizationDesired"];
+    var tosub = ["AttitudeState","ManualControlCommand","StabilizationDesired",'TPV'];
     socket.on('connect', function() {
       console.log("Socket connected");
       socket.emit("subscribe", tosub);

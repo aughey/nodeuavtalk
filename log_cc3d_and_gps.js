@@ -31,6 +31,8 @@ listener.connect(function() {
     listener.on('raw', function(tpv) {
       try {
         var parsed = JSON.parse(tpv);
+        var t = new Date();
+        parsed.timestamp = t;
         console.log(JSON.stringify(parsed));
       } catch(e) {
       }
